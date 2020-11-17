@@ -1,0 +1,274 @@
+{% extends 'webanalytique/base.html' %}
+{% block styles %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <canvas id="network" width="600" height="600" class="shadow my-4"></canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <ul class="list-group">
+                    <li class="list-group-item">Number of nodes : {{ nodes_number }}</li>
+                    <li class="list-group-item">Number of edges : {{ links_number }}</li>
+                    <li class="list-group-item">Density : {{ density }}</li>
+                </ul>
+                <div class="accordion" id="accordionExample">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                                        data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Degree Centrality
+                                </button>
+                            </h2>
+                        </div>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+                                <table class="table table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <td>Key</td>
+{#                                        <td>Label</td>#}
+                                        <td>Value</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for key, value in DC %}
+                                        <tr>
+                                            <td> {{ key }} </td>
+{#                                            <td> {{ nodes | getitem:nodes.id }} </td>#}
+                                            <td> {{ value }} </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed" type="button"
+                                        data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
+                                        aria-controls="collapseTwo">
+                                    Betweenness Centrality
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+                                <table class="table table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <td>Key</td>
+                                        <td>Value</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for key, value in BC %}
+                                        <tr>
+                                            <td> {{ key }} </td>
+                                            <td> {{ value }} </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingThree">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed" type="button"
+                                        data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
+                                        aria-controls="collapseThree">
+                                    Closeness Centrality
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+                                <table class="table table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <td>Key</td>
+                                        <td>Value</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for key, value in CC %}
+                                        <tr>
+                                            <td> {{ key }} </td>
+                                            <td> {{ value }} </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        var graph = JSON.parse('{{G | escapejs}}');
+
+        function forceSimulation(width, height) {
+            return d3.forceSimulation()
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("charge", d3.forceManyBody())
+                .force("link", d3.forceLink().id(d => d.id));
+        }
+
+        function findNode(nodes, x, y, radius) {
+            const rSq = radius * radius;
+            let i;
+            for (i = nodes.length - 1; i >= 0; --i) {
+                const node = nodes[i],
+                    dx = x - node.x,
+                    dy = y - node.y,
+                    distSq = (dx * dx) + (dy * dy);
+                if (distSq < rSq) {
+                    return node;
+                }
+            }
+            // No node selected
+            return undefined;
+        }
+
+        forceGraph = (data) => {
+            let canvas = document.querySelector("#network");
+            const ctx = canvas.getContext('2d');
+
+            const width = canvas.width;
+            const height = canvas.height;
+
+            const w2 = width / 2,
+                h2 = height / 2,
+                nodeRadius = 4;
+
+            const simulation = forceSimulation(width, height);
+            let transform = d3.zoomIdentity;
+
+            // The simulation will alter the input data objects so make
+            // copies to protect the originals.
+            const nodes = data.nodes.map(d => Object.assign({}, d));
+            const edges = data.links.map(d => Object.assign({}, d));
+
+            d3.select(canvas)
+                .call(d3.drag()
+                    // Must set this in order to drag nodes. New in v5?
+                    .container(canvas)
+                    .subject(dragSubject)
+                    .on('start', dragStarted)
+                    .on('drag', dragged)
+                    .on('end', dragEnded))
+                .call(d3.zoom()
+                    .scaleExtent([1 / 10, 8])
+                    .on('zoom', zoomed));
+
+            simulation.nodes(nodes)
+                .on("tick", simulationUpdate);
+            simulation.force("link")
+                .links(edges);
+
+            function zoomed() {
+                transform = d3.event.transform;
+                simulationUpdate();
+            }
+
+            /** Find the node that was clicked, if any, and return it. */
+            function dragSubject() {
+                const x = transform.invertX(d3.event.x),
+                    y = transform.invertY(d3.event.y);
+                const node = findNode(nodes, x, y, nodeRadius);
+                if (node) {
+                    node.x = transform.applyX(node.x);
+                    node.y = transform.applyY(node.y);
+                }
+                // else: No node selected, drag container
+                return node;
+            }
+
+            function dragStarted() {
+                if (!d3.event.active) {
+                    simulation.alphaTarget(0.3).restart();
+                }
+                d3.event.subject.fx = transform.invertX(d3.event.x);
+                d3.event.subject.fy = transform.invertY(d3.event.y);
+            }
+
+            function dragged() {
+                d3.event.subject.fx = transform.invertX(d3.event.x);
+                d3.event.subject.fy = transform.invertY(d3.event.y);
+            }
+
+            function dragEnded() {
+                if (!d3.event.active) {
+                    simulation.alphaTarget(0);
+                }
+                d3.event.subject.fx = null;
+                d3.event.subject.fy = null;
+            }
+
+            function simulationUpdate() {
+                ctx.save();
+                ctx.clearRect(0, 0, width, height);
+                ctx.translate(transform.x, transform.y);
+                ctx.scale(transform.k, transform.k);
+                // Draw edges
+                edges.forEach(function (d) {
+                    ctx.beginPath();
+                    ctx.moveTo(d.source.x, d.source.y);
+                    ctx.lineTo(d.target.x, d.target.y);
+                    ctx.lineWidth = Math.sqrt(d.value);
+                    ctx.strokeStyle = '#aaa';
+                    ctx.stroke();
+                });
+                // Draw nodes
+                nodes.forEach(function (d, i) {
+                    ctx.beginPath();
+                    // Node fill
+                    ctx.moveTo(d.x + nodeRadius, d.y);
+                    ctx.arc(d.x, d.y, nodeRadius, 0, 2 * Math.PI);
+                    ctx.fillStyle = d3.color("steelblue");
+                    ctx.font = "5px Arial";
+                    ctx.fillText(d.label, d.x - 10, d.y - 7);
+                    ctx.fill();
+                    // Node outline
+                    ctx.strokeStyle = '#fff'
+                    ctx.lineWidth = '1.5'
+                    ctx.stroke();
+                });
+                ctx.restore();
+            }
+
+            return canvas;
+        }
+        forceGraph(graph);
+        $(document).ready(function () {
+            $('.table').dataTable();
+            $('.collapse').removeClass('show');
+        });
+    </script>
+{% endblock %}
