@@ -1,4 +1,5 @@
 {% extends 'webanalytique/base.html' %}
+{% load customtags %}
 {% block styles %}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
     <style>
@@ -10,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="col text-center">
-                <canvas id="network" width="600" height="600" class="shadow my-4"></canvas>
+                <canvas id="network" width="600" height="600" class="shadow-lg mb-4"></canvas>
             </div>
         </div>
         <div class="row">
@@ -19,6 +20,7 @@
                     <li class="list-group-item">Number of nodes : {{ nodes_number }}</li>
                     <li class="list-group-item">Number of edges : {{ links_number }}</li>
                     <li class="list-group-item">Density : {{ density }}</li>
+                    <li class="list-group-item">Degree Centrality of the network : {{ DCN }}</li>
                 </ul>
                 <div class="accordion" id="accordionExample">
                     <div class="card">
@@ -37,8 +39,8 @@
                                 <table class="table table-hover table-sm">
                                     <thead>
                                     <tr>
-                                        <td>Key</td>
-{#                                        <td>Label</td>#}
+                                        <td>Id</td>
+                                        <td>Label</td>
                                         <td>Value</td>
                                     </tr>
                                     </thead>
@@ -46,7 +48,7 @@
                                     {% for key, value in DC %}
                                         <tr>
                                             <td> {{ key }} </td>
-{#                                            <td> {{ nodes | getitem:nodes.id }} </td>#}
+                                            <td> {{ nodes | get_label:key }} </td>
                                             <td> {{ value }} </td>
                                         </tr>
                                     {% endfor %}
@@ -71,7 +73,8 @@
                                 <table class="table table-hover table-sm">
                                     <thead>
                                     <tr>
-                                        <td>Key</td>
+                                        <td>Id</td>
+                                        <td>Label</td>
                                         <td>Value</td>
                                     </tr>
                                     </thead>
@@ -79,6 +82,7 @@
                                     {% for key, value in BC %}
                                         <tr>
                                             <td> {{ key }} </td>
+                                            <td> {{ nodes | get_label:key }} </td>
                                             <td> {{ value }} </td>
                                         </tr>
                                     {% endfor %}
@@ -103,7 +107,8 @@
                                 <table class="table table-hover table-sm">
                                     <thead>
                                     <tr>
-                                        <td>Key</td>
+                                        <td>Id</td>
+                                        <td>Label</td>
                                         <td>Value</td>
                                     </tr>
                                     </thead>
@@ -111,6 +116,7 @@
                                     {% for key, value in CC %}
                                         <tr>
                                             <td> {{ key }} </td>
+                                            <td> {{ nodes | get_label:key }} </td>
                                             <td> {{ value }} </td>
                                         </tr>
                                     {% endfor %}
