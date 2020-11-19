@@ -3,7 +3,7 @@
 - python 3.6.8
 - pip
 
-###Installation
+### Installation
 - `clone https://github.com/aera128/WebAnalytique_Master_Project.git`
 - `cd "path project"`
 - `python -m venv ./venv`
