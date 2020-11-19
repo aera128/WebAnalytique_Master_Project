@@ -8,25 +8,39 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col text-center">
-                <canvas id="network" width="600" height="600" class="shadow-lg mb-4"></canvas>
+            <div class="col-12 col-lg-5">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12 text-center" id="viz_container"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-between">
+                            <button class="btn btn-outline-info rounded-0" id="btn-prec">prec</button>
+                            <select class="form-control rounded-0" id="select-graph">
+                                <option value="-1">All Network</option>
+                            </select>
+                            <button class="btn btn-outline-info rounded-0" id="btn-suiv">suiv</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            <div class="col-12 col-lg-7">
                 <ul class="list-group">
                     <li class="list-group-item">Number of nodes : {{ nodes_number }}</li>
                     <li class="list-group-item">Number of edges : {{ links_number }}</li>
                     <li class="list-group-item">Density : {{ density }}</li>
-                    <li class="list-group-item">Degree Centrality of the network : {{ DCN }}</li>
+                    <li class="list-group-item">Degree centrality of the network : {{ DCN }}</li>
+                    <li class="list-group-item">Most popular node : {{ MPN }}</li>
+                    <li class="list-group-item">Community detection performance : {{ comp_perf }}</li>
                 </ul>
                 <div class="accordion" id="accordionExample">
                     <div class="card">
                         <div class="card-header" id="headingOne">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                            <h2 class="mb-0 dropdown">
+                                <button class="btn btn-outline-info btn-block rounded-0 text-left" type="button"
+                                        data-toggle="collapse"
                                         data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                     Degree Centrality
                                 </button>
@@ -36,7 +50,7 @@
                         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                              data-parent="#accordionExample">
                             <div class="card-body">
-                                <table class="table table-hover table-sm">
+                                <table class="table table-hover table-sm table-3">
                                     <thead>
                                     <tr>
                                         <td>Id</td>
@@ -60,7 +74,8 @@
                     <div class="card">
                         <div class="card-header" id="headingTwo">
                             <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left collapsed" type="button"
+                                <button class="btn btn-outline-info btn-block rounded-0 text-left collapsed"
+                                        type="button"
                                         data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
                                         aria-controls="collapseTwo">
                                     Betweenness Centrality
@@ -70,7 +85,7 @@
                         <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
                              data-parent="#accordionExample">
                             <div class="card-body">
-                                <table class="table table-hover table-sm">
+                                <table class="table table-hover table-sm table-3">
                                     <thead>
                                     <tr>
                                         <td>Id</td>
@@ -94,7 +109,8 @@
                     <div class="card">
                         <div class="card-header" id="headingThree">
                             <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left collapsed" type="button"
+                                <button class="btn btn-outline-info btn-block rounded-0 text-left collapsed"
+                                        type="button"
                                         data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
                                         aria-controls="collapseThree">
                                     Closeness Centrality
@@ -104,7 +120,7 @@
                         <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
                              data-parent="#accordionExample">
                             <div class="card-body">
-                                <table class="table table-hover table-sm">
+                                <table class="table table-hover table-sm table-3">
                                     <thead>
                                     <tr>
                                         <td>Id</td>
@@ -125,6 +141,45 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-header" id="headingFour">
+                            <h2 class="mb-0">
+                                <button class="btn btn-outline-info btn-block rounded-0 text-left collapsed"
+                                        type="button"
+                                        data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
+                                        aria-controls="collapseFour">
+                                    Communities
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseFour" class="collapse show" aria-labelledby="headingFour"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+                                <table class="table table-hover table-sm table-5">
+                                    <thead>
+                                    <tr>
+                                        <td>Id</td>
+                                        <td>Nb nodes</td>
+                                        <td>Nb edges</td>
+                                        <td>Intra density</td>
+                                        <td>Inter density</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for com in communities %}
+                                        <tr>
+                                            <td> {{ com.id }} </td>
+                                            <td> {{ com.nb_nodes }} </td>
+                                            <td> {{ com.nb_edges }} </td>
+                                            <td> {{ com.intra_density }} </td>
+                                            <td> {{ com.inter_density }} </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,8 +191,11 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/formatted-numbers.js"></script>
     <script>
-        var graph = JSON.parse('{{G | escapejs}}');
+        var graphs = JSON.parse('{{communities_json | escapejs}}');
+        var network = JSON.parse('{{G | escapejs}}');
+        var num = 0;
 
         function forceSimulation(width, height) {
             return d3.forceSimulation()
@@ -163,7 +221,10 @@
         }
 
         forceGraph = (data) => {
-            let canvas = document.querySelector("#network");
+            let canvas = document.createElement('canvas');
+            canvas.width = 550;
+            canvas.height = 550;
+            $(canvas).addClass("shadow-lg mb-4");
             const ctx = canvas.getContext('2d');
 
             const width = canvas.width;
@@ -271,10 +332,57 @@
 
             return canvas;
         }
-        forceGraph(graph);
+
         $(document).ready(function () {
-            $('.table').dataTable();
+            $('.table-3').dataTable({
+                "columns": [
+                    {"type": "num"},
+                    {"type": "string"},
+                    {"type": "string"},
+                ]
+            });
+            $('.table-5').dataTable({
+                "columns": [
+                    {"type": "num"},
+                    {"type": "num"},
+                    {"type": "num"},
+                    {"type": "string"},
+                    {"type": "string"},
+                ]
+            });
             $('.collapse').removeClass('show');
+            $("#viz_container").html(forceGraph(graphs[num].graph));
+            $(graphs).each((k, g) => {
+                $("#select-graph").append('<option value="' + g.id + '">' + g.id + '</option>');
+                $("#select-graph").val(0);
+            });
+            $("#select-graph").change(() => {
+                num = $("#select-graph").val();
+                if (num == -1) {
+                    $("#viz_container").html(forceGraph(network));
+                } else {
+                    $("#viz_container").html(forceGraph(graphs[num].graph));
+                }
+            });
+            $("#btn-prec").click(() => {
+                if (num >= 0) {
+                    num--;
+                    $("#select-graph").val(num);
+                    if (num == -1) {
+                        $("#viz_container").html(forceGraph(network));
+                    } else {
+                        $("#viz_container").html(forceGraph(graphs[num].graph));
+                    }
+                }
+            });
+            $("#btn-suiv").click(() => {
+                if (num < graphs.length) {
+                    num++;
+                    $("#select-graph").val(num);
+                    $("#viz_container").html(forceGraph(graphs[num].graph));
+                }
+            });
         });
+
     </script>
 {% endblock %}

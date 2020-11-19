@@ -197,54 +197,54 @@ def TP1():
 
 def TP2():
     # 1
-    karate_graph = load_graph('data2.gml', label='id')
-    # 2 a
-    print("Number of Nodes in Karate Network ", karate_graph.number_of_nodes())
-    print("Number of edges in Karate Network ", karate_graph.number_of_edges())
-    # 2 b
-    print("In Degree for the Karate Network ", in_degree(karate_graph))
-    print("Out Degree for the Karate Network ", out_degree(karate_graph))
-    # 2 c
-    print("Degree Centrality of the Karate Graph ", degree_centrality(karate_graph))
-    # 2 c
-    print("Betweeness Centrality of the Karate Graph ", betweenness_centrality(karate_graph))
-    # 2 c
-    print("Closeness Centrality of the Karate Graph ", closeness_centrality(karate_graph))
-    # 2 c
-    print("Degree Centrality of the Karate Network ", get_graph_degree_centrality(karate_graph))
-    # 2 d
-    print("Density of the Karate Network ", graph_density(karate_graph))
-    # 2 e
-    print("Average path length of the Karate Network ", average_path_length(karate_graph))
-    # 3 Already Calculted -- Analysis
-    # 4 Already Calculated -- Analysis
-    # 5
-    print("Edge Betweeness Centrality of the Karate Graph ", edge_betweenness_centrality(karate_graph))
-    # 6
-    print("Community Detection ", community_detection(karate_graph))
-    # 7
-    print("Community Detection Performance ", community_detection_performance(karate_graph))
-    # 8 Already Calculated -- Analysis -- In 6 pass the value of k
-    # 9
-    print("Inter Density ", inter_density(karate_graph))
-    # 10
-    print("Intra Density ", intra_density(karate_graph))
-    # 11 Already Calculated -- Analysis -- In 7 pass the value of k
-    # 12 For different number of communities, change the value of k
-    comp = nx.algorithms.community.centrality.girvan_newman(karate_graph)
-    k = 1
-    # print(last(itertools.islice(comp, k)))
-    for community in last(itertools.islice(comp, k)):
-        print("Community is ", community)
-        g = nx.Graph.subgraph(karate_graph, community)
-        print("Most Popular person in the community ", most_popular_node(g))
-    # 13 -- same as above with k = 1
-    comm = tuple(sorted(c) for c in next(comp))
-    for community in comm:
-        if len(community) == 1:
-            break
-        g = nx.Graph.subgraph(karate_graph, community)
-        print("The id of the teacher is ", most_popular_node(g))
+    karate_graph = load_graph('./Data2/data2.gml', label='id')
+    # # 2 a
+    # print("Number of Nodes in Karate Network ", karate_graph.number_of_nodes())
+    # print("Number of edges in Karate Network ", karate_graph.number_of_edges())
+    # # 2 b
+    # print("In Degree for the Karate Network ", in_degree(karate_graph))
+    # print("Out Degree for the Karate Network ", out_degree(karate_graph))
+    # # 2 c
+    # print("Degree Centrality of the Karate Graph ", degree_centrality(karate_graph))
+    # # 2 c
+    # print("Betweeness Centrality of the Karate Graph ", betweenness_centrality(karate_graph))
+    # # 2 c
+    # print("Closeness Centrality of the Karate Graph ", closeness_centrality(karate_graph))
+    # # 2 c
+    # print("Degree Centrality of the Karate Network ", get_graph_degree_centrality(karate_graph))
+    # # 2 d
+    # print("Density of the Karate Network ", graph_density(karate_graph))
+    # # 2 e
+    # # print("Average path length of the Karate Network ", average_path_length(karate_graph))
+    # # 3 Already Calculted -- Analysis
+    # # 4 Already Calculated -- Analysis
+    # # 5
+    # print("Edge Betweeness Centrality of the Karate Graph ", edge_betweenness_centrality(karate_graph))
+    # # 6
+    # print("Community Detection ", community_detection(karate_graph))
+    # # 7
+    # print("Community Detection Performance ", community_detection_performance(karate_graph))
+    # # 8 Already Calculated -- Analysis -- In 6 pass the value of k
+    # # 9
+    # print("Inter Density ", inter_density(karate_graph))
+    # # 10
+    # print("Intra Density ", intra_density(karate_graph))
+    # # 11 Already Calculated -- Analysis -- In 7 pass the value of k
+    # # 12 For different number of communities, change the value of k
+    # comp = nx.algorithms.community.centrality.girvan_newman(karate_graph)
+    # k = 1
+    # # print(last(itertools.islice(comp, k)))
+    # for community in last(itertools.islice(comp, k)):
+    #     print("Community is ", community)
+    #     g = nx.Graph.subgraph(karate_graph, community)
+    #     print("Most Popular person in the community ", most_popular_node(g))
+    # # 13 -- same as above with k = 1
+    # comm = tuple(sorted(c) for c in next(comp))
+    # for community in comm:
+    #     if len(community) == 1:
+    #         break
+    #     g = nx.Graph.subgraph(karate_graph, community)
+    #     print("The id of the teacher is ", most_popular_node(g))
     # 14
     print("Visualization of the whole Network ")
     nx.draw(karate_graph, with_labels=True)
