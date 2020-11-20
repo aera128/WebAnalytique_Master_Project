@@ -42,98 +42,33 @@
                                 <button class="btn btn-outline-info btn-block rounded-0 text-left" type="button"
                                         data-toggle="collapse"
                                         data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Degree Centrality
+                                    Informations
                                 </button>
                             </h2>
                         </div>
-
                         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                              data-parent="#accordionExample">
                             <div class="card-body">
-                                <table class="table table-hover table-sm table-3">
+                                <table class="table table-hover table-sm table-ginfo">
                                     <thead>
                                     <tr>
                                         <td>Id</td>
                                         <td>Label</td>
-                                        <td>Value</td>
+                                        <td>Degree</td>
+                                        <td>Degree Centrality</td>
+                                        <td>Betweeness Centrality</td>
+                                        <td>Closeness Centrality</td>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for key, value in DC %}
+                                    {% for data in dataTable %}
                                         <tr>
-                                            <td> {{ key }} </td>
-                                            <td> {{ nodes | get_label:key }} </td>
-                                            <td> {{ value }} </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header" id="headingTwo">
-                            <h2 class="mb-0">
-                                <button class="btn btn-outline-info btn-block rounded-0 text-left collapsed"
-                                        type="button"
-                                        data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
-                                        aria-controls="collapseTwo">
-                                    Betweenness Centrality
-                                </button>
-                            </h2>
-                        </div>
-                        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
-                             data-parent="#accordionExample">
-                            <div class="card-body">
-                                <table class="table table-hover table-sm table-3">
-                                    <thead>
-                                    <tr>
-                                        <td>Id</td>
-                                        <td>Label</td>
-                                        <td>Value</td>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for key, value in BC %}
-                                        <tr>
-                                            <td> {{ key }} </td>
-                                            <td> {{ nodes | get_label:key }} </td>
-                                            <td> {{ value }} </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header" id="headingThree">
-                            <h2 class="mb-0">
-                                <button class="btn btn-outline-info btn-block rounded-0 text-left collapsed"
-                                        type="button"
-                                        data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
-                                        aria-controls="collapseThree">
-                                    Closeness Centrality
-                                </button>
-                            </h2>
-                        </div>
-                        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
-                             data-parent="#accordionExample">
-                            <div class="card-body">
-                                <table class="table table-hover table-sm table-3">
-                                    <thead>
-                                    <tr>
-                                        <td>Id</td>
-                                        <td>Label</td>
-                                        <td>Value</td>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for key, value in CC %}
-                                        <tr>
-                                            <td> {{ key }} </td>
-                                            <td> {{ nodes | get_label:key }} </td>
-                                            <td> {{ value }} </td>
+                                            <td> {{ data.id }} </td>
+                                            <td> {{ data.label }} </td>
+                                            <td> {{ data.degree }} </td>
+                                            <td> {{ data.DC }} </td>
+                                            <td> {{ data.BC }} </td>
+                                            <td> {{ data.CC }} </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -159,10 +94,11 @@
                                     <thead>
                                     <tr>
                                         <td>Id</td>
-                                        <td>Nb nodes</td>
-                                        <td>Nb edges</td>
+                                        <td>Nodes</td>
+                                        <td>Edges</td>
                                         <td>Intra density</td>
                                         <td>Inter density</td>
+                                        <td>ASP</td>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -173,6 +109,7 @@
                                             <td> {{ com.nb_edges }} </td>
                                             <td> {{ com.intra_density }} </td>
                                             <td> {{ com.inter_density }} </td>
+                                            <td> {{ com.average_shortest_path }} </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -334,9 +271,12 @@
         }
 
         $(document).ready(function () {
-            $('.table-3').dataTable({
+            $('.table-ginfo').dataTable({
                 "columns": [
                     {"type": "num"},
+                    {"type": "string"},
+                    {"type": "num"},
+                    {"type": "string"},
                     {"type": "string"},
                     {"type": "string"},
                 ]
@@ -346,6 +286,7 @@
                     {"type": "num"},
                     {"type": "num"},
                     {"type": "num"},
+                    {"type": "string"},
                     {"type": "string"},
                     {"type": "string"},
                 ]

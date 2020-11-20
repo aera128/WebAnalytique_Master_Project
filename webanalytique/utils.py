@@ -106,7 +106,8 @@ def get_community(G, comp, k=1):
                 "nb_nodes": len(g.nodes),
                 "nb_edges": len(g.edges),
                 "intra_density": intra_density,
-                "inter_density": inter_density
+                "inter_density": inter_density,
+                "average_shortest_path": nx.average_shortest_path_length(g),
             })
             i += 1
     return comp_list
