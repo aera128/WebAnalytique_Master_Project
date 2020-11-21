@@ -380,7 +380,7 @@
                 }
             });
             $("#btn-suiv").click(() => {
-                if (num < graphs.length) {
+                if (num < graphs.length - 1) {
                     num++;
                     $("#select-graph").val(num);
                     $("#viz_container").html(forceGraph(graphs[num].graph));

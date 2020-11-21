@@ -175,5 +175,8 @@ def gen_graph(name_dir):
     return data
 
 
-def gen_data1(name_dir):
+def gen_data1():
     data = gen_graph("Data1")
+
+
+# gen_data1()
