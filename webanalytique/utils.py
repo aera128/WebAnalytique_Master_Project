@@ -1,4 +1,5 @@
 import itertools
+import json
 
 import networkx as nx
 
@@ -111,3 +112,68 @@ def get_community(G, comp, k=1):
             })
             i += 1
     return comp_list
+
+
+def gen_graph(name_dir):
+    data = dict()
+    try:
+        with open('./' + name_dir + '/data.json') as json_file:
+            data = json.load(json_file)
+    except:
+        pass
+
+    if not data:
+        g = nx.read_gml('./' + name_dir + '/data.gml', label=None)
+        g = g.subgraph(list(g.nodes)[:5000])
+        k = 1
+        node_links = nx.node_link_data(g)
+        comp = nx.algorithms.community.centrality.girvan_newman(g)
+        communities = get_community(g, comp, k)
+        DC = nx.degree_centrality(g)
+        BC = nx.betweenness_centrality(g)
+        CC = nx.closeness_centrality(g)
+
+        degrees = nx.degree(g)
+        dataTable = list()
+        for node in node_links["nodes"]:
+            dataTable.append({
+                "id": node['id'],
+                "label": node['label'],
+                "degree": degrees[node['id']],
+                "DC": DC[node['id']],
+                "BC": BC[node['id']],
+                "CC": CC[node['id']],
+            })
+
+        dataTable_e = list()
+        edge_btwness = edge_betweenness_centrality(g)
+        for edge in node_links['links']:
+            dataTable_e.append({
+                "source": edge["source"],
+                "target": edge["target"],
+                "value": edge["value"],
+                "edge_btwness": edge_btwness[(edge["source"], edge["target"])],
+            })
+
+        data = {
+            "G": json.dumps(node_links),
+            "communities_json": json.dumps(communities),
+            "communities": communities,
+            "dataTable_e": dataTable_e,
+            "comp_perf": community_detection_performance(g, comp, k),
+            "nodes_number": number_of_nodes(g),
+            "links_number": number_of_edges(g),
+            "density": graph_density(g),
+            "DCN": get_graph_degree_centrality(g),
+            "MPN": most_popular_node(g),
+            "dataTable": dataTable,
+        }
+
+        with open('./' + name_dir + '/data.json', 'w') as outfile:
+            json.dump(data, outfile)
+
+    return data
+
+
+def gen_data1(name_dir):
+    data = gen_graph("Data1")

@@ -8,15 +8,15 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
-            <div class="col-12 col-lg-5">
+            <div class="col-12">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12 text-center" id="viz_container"></div>
                     </div>
                     <div class="row">
-                        <div class="col-12 d-flex justify-content-between">
+                        <div class="col-12 col-md-6 d-flex justify-content-between mx-auto mb-4">
                             <button class="btn btn-outline-info rounded-0" id="btn-prec">prec</button>
                             <select class="form-control rounded-0" id="select-graph">
                                 <option value="-1">All Network</option>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-7">
+            <div class="col-12">
                 <ul class="list-group">
                     <li class="list-group-item">Number of nodes : {{ nodes_number }}</li>
                     <li class="list-group-item">Number of edges : {{ links_number }}</li>
@@ -42,7 +42,7 @@
                                 <button class="btn btn-outline-info btn-block rounded-0 text-left" type="button"
                                         data-toggle="collapse"
                                         data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Informations
+                                    Nodes Informations
                                 </button>
                             </h2>
                         </div>
@@ -77,6 +77,42 @@
                         </div>
                     </div>
                     <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h2 class="mb-0 dropdown">
+                                <button class="btn btn-outline-info btn-block rounded-0 text-left" type="button"
+                                        data-toggle="collapse"
+                                        data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                    Edges Informations
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
+                             data-parent="#accordionExample">
+                            <div class="card-body">
+                                <table class="table table-hover table-sm table-einfo">
+                                    <thead>
+                                    <tr>
+                                        <td>Source</td>
+                                        <td>Target</td>
+                                        <td>Value</td>
+                                        <td>Edge Betweeness</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for data in dataTable_e %}
+                                        <tr>
+                                            <td> {{ data.source }} </td>
+                                            <td> {{ data.target }} </td>
+                                            <td> {{ data.value }} </td>
+                                            <td> {{ data.edge_btwness }} </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
                         <div class="card-header" id="headingFour">
                             <h2 class="mb-0">
                                 <button class="btn btn-outline-info btn-block rounded-0 text-left collapsed"
@@ -98,7 +134,7 @@
                                         <td>Edges</td>
                                         <td>Intra density</td>
                                         <td>Inter density</td>
-                                        <td>ASP</td>
+                                        <td>ASPL</td>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -256,13 +292,32 @@
                     ctx.moveTo(d.x + nodeRadius, d.y);
                     ctx.arc(d.x, d.y, nodeRadius, 0, 2 * Math.PI);
                     ctx.fillStyle = d3.color("steelblue");
-                    ctx.font = "5px Arial";
-                    ctx.fillText(d.label, d.x - 10, d.y - 7);
                     ctx.fill();
                     // Node outline
                     ctx.strokeStyle = '#fff'
-                    ctx.lineWidth = '1.5'
+                    ctx.lineWidth = '1'
                     ctx.stroke();
+                    ctx.fillStyle = d3.color("white");
+                    ctx.font = "2px Arial";
+                    switch (Math.floor(Math.log10(d.id))) {
+                        case 0:
+                            ctx.fillText(d.id, d.x - 0.6, d.y + 0.75);
+                            break
+                        case 1:
+                            ctx.fillText(d.id, d.x - 1.25, d.y + 0.75);
+                            break
+                        case 2:
+                            ctx.fillText(d.id, d.x - 1.75, d.y + 0.75);
+                            break
+                        case 3:
+                            ctx.fillText(d.id, d.x - 2.25, d.y + 0.75);
+                            break
+                        default:
+                            ctx.fillText(d.id, d.x - 0.6, d.y + 0.75);
+                    }
+                    ctx.fillStyle = d3.color("black");
+                    ctx.font = "3px Arial";
+                    ctx.fillText(d.label, d.x - d.label.length + 1, d.y - 5);
                 });
                 ctx.restore();
             }
@@ -277,6 +332,14 @@
                     {"type": "string"},
                     {"type": "num"},
                     {"type": "string"},
+                    {"type": "string"},
+                    {"type": "string"},
+                ]
+            });
+            $('.table-einfo').dataTable({
+                "columns": [
+                    {"type": "num"},
+                    {"type": "num"},
                     {"type": "string"},
                     {"type": "string"},
                 ]
