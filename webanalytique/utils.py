@@ -173,10 +173,3 @@ def gen_graph(name_dir):
             json.dump(data, outfile)
 
     return data
-
-
-def gen_data1():
-    data = gen_graph("Data1")
-
-
-# gen_data1()

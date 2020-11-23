@@ -13,7 +13,11 @@
             <div class="col-12">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-12 text-center" id="viz_container"></div>
+                        <div class="col-12 text-center" id="viz_container">
+                            <button id="gen_viz" class="btn btn-outline-info btn-lg rounded-0 my-4">Generate
+                                Vizualisation
+                            </button>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-12 col-md-6 d-flex justify-content-between mx-auto mb-4">
@@ -355,7 +359,9 @@
                 ]
             });
             $('.collapse').removeClass('show');
-            $("#viz_container").html(forceGraph(graphs[num].graph));
+            $('#gen_viz').click(() => {
+                $("#viz_container").html(forceGraph(graphs[num].graph));
+            })
             $(graphs).each((k, g) => {
                 $("#select-graph").append('<option value="' + g.id + '">' + g.id + '</option>');
                 $("#select-graph").val(0);
