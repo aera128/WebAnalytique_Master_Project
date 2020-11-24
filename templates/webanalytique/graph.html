@@ -36,7 +36,9 @@
                     <li class="list-group-item">Number of edges : {{ links_number }}</li>
                     <li class="list-group-item">Density : {{ density }}</li>
                     <li class="list-group-item">Degree centrality of the network : {{ DCN }}</li>
-                    <li class="list-group-item">Most popular node : {{ MPN }}</li>
+                    <li class="list-group-item">Most popular node : [id: {{ MPN | get_item:0 }},
+                        degree: {{ MPN | get_item:1 }}]
+                    </li>
                     <li class="list-group-item">Community detection performance : {{ comp_perf }}</li>
                 </ul>
                 <div class="accordion" id="accordionExample">
