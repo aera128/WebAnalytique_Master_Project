@@ -4,7 +4,7 @@
 - pip
 
 ### Installation
-- `clone https://github.com/aera128/WebAnalytique_Master_Project.git`
+- `git clone https://github.com/aera128/WebAnalytique_Master_Project.git`
 - `cd WebAnalytique_Master_Project`
 - `python -m venv ./venv`
 - `pip install -r requirements.txt --user`
